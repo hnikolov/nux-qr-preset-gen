@@ -440,7 +440,7 @@ def set_gate(raw: bytearray, pdict):
         if pname in pdict.keys() and pdict[pname] is not None:
             write_uint8(raw, offset, pdict[pname])
         else:
-            print("WARNING (", model, "): Value not provided for parameter - ", pname)
+            print("WARNING (Noise Gate): Value not provided for parameter - ", pname)
 
 # TODO: 'ratio': '2.5:1', release:120, threshold: -24 (Studio Cmp generated)
 def set_compressor(raw: bytearray, pdict):
