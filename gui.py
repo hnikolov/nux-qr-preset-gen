@@ -17,7 +17,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk
 
-from toml_parse import convert_toml_file, convert_toml_string
+from toml_parse import convert_toml_file, convert_toml_string, load_preset_from_string
 
 # ---------------------------------------------------------------------------
 # Try to import drag-and-drop support (optional dependency)
@@ -195,6 +195,17 @@ class QRPresetApp:
         self._show_image(png_path)
         self._set_status(f"Saved: {png_path}")
 
+    @staticmethod
+    def _unique_path(path: str) -> str:
+        """Return *path* if it doesn't exist, otherwise append _1, _2, … before the extension."""
+        if not os.path.exists(path):
+            return path
+        base, ext = os.path.splitext(path)
+        n = 1
+        while os.path.exists(f"{base}_{n}{ext}"):
+            n += 1
+        return f"{base}_{n}{ext}"
+
     def _convert_string(self, toml_text: str):
         self._set_status("Converting pasted TOML …")
         self.root.update_idletasks()
@@ -204,6 +215,18 @@ class QRPresetApp:
             messagebox.showerror("Conversion Error", str(exc))
             self._set_status("Conversion failed")
             return
+
+        # Save the pasted TOML text alongside the QR image
+        try:
+            preset = load_preset_from_string(toml_text)
+            toml_name = preset.get("title", "preset") + ".toml"
+            toml_path = self._unique_path(os.path.join(OUTPUT_DIR, toml_name))
+            with open(toml_path, "w", encoding="utf-8") as f:
+                f.write(toml_text)
+        except Exception as exc:
+            messagebox.showwarning("TOML Save Warning",
+                                  f"QR generated but could not save .toml:\n{exc}")
+
         self._show_image(png_path)
         self._set_status(f"Saved: {png_path}")
 
