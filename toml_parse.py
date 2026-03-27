@@ -61,5 +61,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(f"Loading: {args.filename}")
 
-    png = convert_toml_file(args.filename)
-    print(f"QR saved to: {png}")
+    convert_toml_file(args.filename)
+  

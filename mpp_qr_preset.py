@@ -507,10 +507,11 @@ def set_delay(raw: bytearray, pdict):
 
     # Linear translating time-to-percentage values
     name = DLY_TIME_PARAM[model]["name"]
-    value = percentage_from_range(pdict[name], DLY_TIME_PARAM[model]["vmin"], DLY_TIME_PARAM[model]["vmax"])
-    offset = mapping[name]
-    write_uint8(raw, offset, value)
-    # print(model, DLY_TIME_PARAM[model]["name"], DLY_TIME_PARAM[model]["vmin"], DLY_TIME_PARAM[model]["vmax"], offset, pdict[name], value)
+    if name in pdict.keys() and pdict[name] is not None:
+        value = percentage_from_range(pdict[name], DLY_TIME_PARAM[model]["vmin"], DLY_TIME_PARAM[model]["vmax"])
+        offset = mapping[name]
+        write_uint8(raw, offset, value)
+        # print(model, DLY_TIME_PARAM[model]["name"], DLY_TIME_PARAM[model]["vmin"], DLY_TIME_PARAM[model]["vmax"], offset, pdict[name], value)
         
 def set_reverb(raw: bytearray, pdict):
     model = pdict["name"].lower()
@@ -522,14 +523,15 @@ def set_reverb(raw: bytearray, pdict):
         if pname in pdict.keys() and pdict[pname] is not None:
             write_uint8(raw, offset, pdict[pname])
         else:
-            print("WARNING: Value not provided for parameter - ", pname)
+            print("WARNING (", model, "): Value not provided for parameter - ", pname)
 
     # Linear translating time-to-percentage values (decay)
     name = RVB_TIME_PARAM[model]["name"]
-    value = percentage_from_range(pdict[name], RVB_TIME_PARAM[model]["vmin"], RVB_TIME_PARAM[model]["vmax"])
-    offset = mapping[name]
-    write_uint8(raw, offset, value)
-    # print(model, RVB_TIME_PARAM[model]["name"], RVB_TIME_PARAM[model]["vmin"], RVB_TIME_PARAM[model]["vmax"], offset, pdict[name], value)
+    if name in pdict.keys() and pdict[name] is not None:
+        value = percentage_from_range(pdict[name], RVB_TIME_PARAM[model]["vmin"], RVB_TIME_PARAM[model]["vmax"])
+        offset = mapping[name]
+        write_uint8(raw, offset, value)
+        # print(model, RVB_TIME_PARAM[model]["name"], RVB_TIME_PARAM[model]["vmin"], RVB_TIME_PARAM[model]["vmax"], offset, pdict[name], value)
 
 def set_ir_params(raw: bytearray, pdict):
     model = pdict["name"].upper()
